@@ -1,0 +1,40 @@
+ORIG_PN="vala"
+inherit gnome2
+
+NAME="vala0.12"
+VERSION=0.12.1
+RELEASE=1
+CATEGORY="Devel"
+SUMMARY="Compiler for the GObject type system"
+DESCRIPTION="Vala is a new programming language that aims to bring modern
+programming language features to GNOME developers without imposing any
+additional runtime requirements and without using a different ABI compared
+to applications and libraries written in C."
+HOMEPAGE="http://live.gnome.org/Vala"
+
+PATCH_URI="
+	0.7.7-testrunner.patch
+	0.9.8-no-dirty-version.patch
+	0.10.1-exeext.patch
+"
+
+PKG_NAMES="${NAME} ${NAME}-doc lib${NAME}_0 lib${NAME}-devel"
+libvala0_12_0_CONTENTS="usr/bin/cygvala-0.12-0.dll usr/lib/vala-0.12/"
+libvala0_12_devel_CONTENTS="usr/include/ usr/lib/libvala* usr/lib/pkgconfig/"
+vala0_12_REQUIRES="pkg-config"
+vala0_12_CONTENTS="--exclude=devhelp usr/bin/va*-0.12* usr/share/"
+vala0_12_doc_CATEGORY="Doc"
+vala0_12_doc_CONTENTS="usr/share/devhelp/books/vala-0.12/"
+
+DIFF_EXCLUDES="vala*.c"
+
+CYGCONF_ARGS="--enable-vapigen"
+
+src_install() {
+	cd ${B}
+	cyginstall
+
+	mv ${D}/usr/share/aclocal/vala{,-0.12}.m4
+
+	find ${D}/usr/bin/ ${D}/usr/share/man/man1/ -name 'va*' ! -name '*-0.12*' -delete
+}
